@@ -1,0 +1,39 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SG Assignment</title>
+  <script type="text/html" id="result-template">
+    <li>
+      <%= student %>
+    </li>
+  </script>
+  <script type="text/html" id="result-list-template">
+    <ul>
+    </ul>
+  </script>
+</head>
+<body>
+    <div id="search-form">
+      <h2>Student Search</h2>
+      <p>Please enter student's first name and/or last name:</p>
+      <form id="search-form" action="" method="post">
+	{% csrf_token %}
+	<label for="id_firstname">First Name</label>
+	<input id="id_firstname" type="text" name="first_name" maxlength="30" />
+	<label for="id_lastname">Last Name</label>
+	<input id="id_lastname" type="text" name="last_name" />
+	<button id="id_submit" type="submit" >Search</button>
+      </form>
+    </div>
+    <div id="result-list">
+    </div>
+  <script src="{% static 'students_app/vendor/jquery-3.0.0.min.js' %}"></script>
+  <script src="{% static 'students_app/vendor/underscore-min.js' %}"></script>
+  <script src="{% static 'students_app/vendor/backbone-min.js' %}"></script>
+  <script src="{% static 'students_app/js/app.js' %}"></script>
+</body>
+</html>
+
