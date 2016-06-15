@@ -1,7 +1,9 @@
 # assignment
 
 - Create a virtual environment
+```
 make env
+```
 
 - Install the dependencies
 make deps
