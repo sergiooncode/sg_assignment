@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>SG Assignment</title>
-  <script type="text/html" id="result-template">
+  <script type="text/template" id="result-template">
     <li>
-      <%= student %>
+      <%= name %>
     </li>
   </script>
   <script type="text/html" id="result-list-template">
@@ -28,7 +28,9 @@
 	<button id="id_submit" type="submit" >Search</button>
       </form>
     </div>
-    <div id="result-list">
+    <div id="results">
+    	<ul id="result-list">
+    	</ul>
     </div>
   <script src="{% static 'students_app/vendor/jquery-3.0.0.min.js' %}"></script>
   <script src="{% static 'students_app/vendor/underscore-min.js' %}"></script>

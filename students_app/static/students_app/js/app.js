@@ -1,34 +1,22 @@
-$(function(){
-	var SearchResultModel = Backbone.Model.extend({
-		defaults: {
-			first_name: '',
-			last_name: ''
+$(function () {
+	var Student = Backbone.Model.extend({
+		initialize: function(fn, ln) {
+			this.first_name = fn;
+			this.last_name = ln;
 		}
 	});
 
-	var SearchResultList = Backbone.Collection.extend({
-		model: SearchResultModel,
-		performSearch: function(query) {
-			var url = "/api/students/search/?" +
-				"first_name=" + "&" + query.first_name +
-				"last_name=" + query.last_name;
-			$.ajax({
-				type: "GET",
-				url: url,
-				success: this._searchComplete
-			});
+	var StudentSearch = Backbone.Collection.extend({
+		model: Student,
+		initialize : function(options){
+			this.first_name = options.query.first_name;
+			this.last_name = options.query.last_name;
 		},
-		_searchComplete: function(results) {
-			//searchResultModel.set({searchResults: results});
-			$.each(results, function (index) {
-				var fn = results[index].first_name;
-				var ln = results[index].last_name;
-				var searchResult = new SearchResultModel();
-				searchResult.set({first_name: fn});
-				searchResult.set({last_name: ln});
-				searchResultList.add(searchResult);
-			})
-			console.log(searchResultList);
+		url: function(){
+			return "/api/students/search?="+"first_name="+this.first_name+"&last_name="+this.last_name;
+		},
+		parse: function(response, xhr) {
+			return response;
 		}
 	});
 
@@ -49,41 +37,39 @@ $(function(){
 		}
 	});
 
-	var SearchResultView = Backbone.View.extend({
-		tagName: 'li',
-		initialize: function () {
-			this.template = _.template($('#result-template').html());
-			this.render();
-		},
-		render: function () {
-			this.$el.html(this.template({student: "yoo"}));
-			return this;
-		}
-	});
-
 	var SearchResultListView = Backbone.View.extend({
-		el: '#result-list',
 		tagName: 'ul',
+		id: 'result-list',
 		initialize: function () {
-			this.template = _.template($('#result-list-template').html());
-			//this.template = _.template($(this.templateName).html());
-			//this.model.on("change:searchResults", this.render, this);
-			this.render();
+			//this.listenTo(this.collection, 'reset', this.render);
+			//console.log(this.collection);
 		},
 		render: function () {
-			that = this;
-			this.$el.empty();
-			this.$el.append(this.template);
-			searchResultList.each(function (model) {
-				that.$el.append(new SearchResultView({model: model.toJSON()}));
+			var template = $("#result-template").html();
+			var el = $(this.el);
+			console.log(this.collection);
+			this.collection.each(function (model) {
+				var student = model.student;
+				console.log(student);
+				var tmpl = _.template(template);
+				el.append(tmpl(model.toJSON()));
 			});
-			return this;
 		}
 	});
 
-	//var searchResultModel = new SearchResultModel();
-	var searchResultList = new SearchResultList();
-	var searchFormView = new SearchFormView({collection: searchResultList});
-	//var searchResultView = new SearchResultView({model: searchResultModel});
-	var searchResultListView = new SearchResultListView({collection: searchResultList});
+	var students = new StudentSearch({query: {first_name: '', last_name: 'smith'}});
+	//var students = new StudentCollection([
+	//	{id: 1,name:"student 1"},
+	//	{id: 2,name:"student 2"},
+	//	{id: 3,name:"student 3"}
+	//]);
+	//console.log(students.models);
+
+	var view = new SearchResultListView({collection: students});
+	students.fetch({success: view.render()});
+	//students.fetch({success: function () {
+	//	students.each(function(model){console.log(model)});
+	//}});
+	view.render();
+	$("#results").html(view.el);
 });

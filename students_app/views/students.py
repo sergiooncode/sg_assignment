@@ -26,7 +26,12 @@ def students_search(request):
         if last_name is not None:
             students = all_students.filter(last_name=last_name)
     serializer = StudentSerializer(students, many=True)
-    return Response(serializer.data)
+    sd = []
+    for d in serializer.data:
+        student_dict = {}
+        student_dict['student'] = d
+        sd.append(student_dict)
+    return Response(sd)
 
 
 class StudentDetail(generics.ListAPIView):
